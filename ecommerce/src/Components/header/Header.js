@@ -5,11 +5,10 @@ import { Link, NavLink } from 'react-router-dom';
 import { FaShoppingCart, FaTimes } from 'react-icons/fa'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
 
-
 const logo = (
     <div className={styles.logo}>
         <Link to="/">
-            <h2>e <span>Shop</span>.</h2>
+            <h2>Law <span>Ease</span>Sphere</h2>
         </Link>
     </div>
 )
