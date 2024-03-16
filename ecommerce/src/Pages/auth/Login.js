@@ -1,68 +1,118 @@
-import React, { useState } from 'react';
-import styles from './auth.module.scss'
-import loginImg from '../../assets/login.png'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaGoogle } from 'react-icons/fa'
-import Card from '../../Components/card/Card'
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../Firebase/confing'
-import { ToastContainer, toast } from 'react-toastify';
-import Loader from '../../Components/loader/Loader'
+import { useState } from "react";
+import styles from "./auth.module.scss";
+import loginImg from "../../assets/login.png";
+import { Link, useNavigate } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
+import Card from "../../Components/card/Card";
+import {
+    GoogleAuthProvider,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+} from "firebase/auth";
+import { auth } from "../../Firebase/confing";
+import { toast } from "react-toastify";
+import Loader from "../../Components/loader/Loader";
+import { useSelector } from "react-redux";
+// import { selectPreviousURL } from "../../redux/slice/cartSlice";
 
-function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const Login = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    // const previousURL = useSelector(selectPreviousURL);
     const navigate = useNavigate();
-    const [isLoading, setLoading] = useState(false);
+
+    // const redirectUser = () => {
+    //     if (previousURL.includes("cart")) {
+    //         return navigate("/cart");
+    //     }
+    //     navigate("/");
+    // };
 
     const loginUser = (e) => {
         e.preventDefault();
-        isLoading(true);
+        setIsLoading(true);
+
         signInWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                isLoading(false);
-                toast.success("User Loggedin");
-                setEmail('');
-                setPassword('');
-                navigate("/")
+            .then((userCredential) => {
+                // const user = userCredential.user;
+                setIsLoading(false);
+                toast.success("Login Successful...");
+                // redirectUser();
+
             })
-            .catch(error => {
+            .catch((error) => {
+                setIsLoading(false);
                 toast.error(error.message);
-                isLoading(false);
             });
-    }
+    };
+
+    // Login with Goooglr
+    const provider = new GoogleAuthProvider();
+    const signInWithGoogle = () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // const user = result.user;
+                toast.success("Login Successfully");
+                // redirectUser();
+                navigate("/");
+            })
+            .catch((error) => {
+                toast.error(error.message);
+            });
+    };
+
     return (
         <>
-
-            <ToastContainer />
             {isLoading && <Loader />}
             <section className={`container ${styles.auth}`}>
                 <div className={styles.img}>
                     <img src={loginImg} alt="Login" width="400" />
                 </div>
+
                 <Card>
                     <div className={styles.form}>
-                        <h2 >Login</h2>
+                        <h2>Login</h2>
 
                         <form onSubmit={loginUser}>
-                            <input type="text" placeholder='Email' required onChange={event => setEmail(event.target.value)} value={email} />
-                            <input type="password" placeholder='Password' required onChange={event => setPassword(event.target.value)} value={password} />
-                            <button className="--btn --btn-primary --btn-block">Login</button>
+                            <input
+                                type="text"
+                                placeholder="Email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button type="submit" className="--btn --btn-primary --btn-block">
+                                Login
+                            </button>
                             <div className={styles.links}>
-                                <Link to='/reset'>Forgot Password</Link>
+                                <Link to="/reset">Reset Password</Link>
                             </div>
                             <p>-- or --</p>
                         </form>
-                        <button className="--btn --btn-danger --btn-block" type="submit"><FaGoogle color="#fff" /> Login with Google</button>
+                        <button
+                            className="--btn --btn-danger --btn-block"
+                            onClick={signInWithGoogle}
+                        >
+                            <FaGoogle color="#fff" /> Login With Google
+                        </button>
                         <span className={styles.register}>
-                            <p>Don't have Account?  </p>
-                            <Link to="/register"><u>Register</u></Link>
+                            <p>Don't have an account?</p>
+                            <Link to="/register">Register</Link>
                         </span>
                     </div>
                 </Card>
             </section>
         </>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;
