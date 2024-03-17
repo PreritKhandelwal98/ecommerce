@@ -1,9 +1,29 @@
-import React from 'react'
-import './Home.module.scss'
-function Home() {
-    return (
-        <div>Home</div>
-    )
-}
+import React, { useEffect } from "react";
+import Product from "../../Components/product/Product";
+import Slider from "../../Components/slider/Slider";
 
-export default Home
+const Home = () => {
+    const url = window.location.href;
+
+    useEffect(() => {
+        const scrollToProducts = () => {
+            if (url.includes("#products")) {
+                window.scrollTo({
+                    top: 700,
+                    behavior: "smooth",
+                });
+                return;
+            }
+        };
+        scrollToProducts();
+    }, [url]);
+
+    return (
+        <div>
+            <Slider />
+            <Product />
+        </div>
+    );
+};
+
+export default Home;

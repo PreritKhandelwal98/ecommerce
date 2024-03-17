@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import { FaShoppingCart, FaTimes, FaUserCircle } from "react-icons/fa";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import { auth } from "../../Firebase/confing";
+import { auth } from "../../Firebase/config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
@@ -12,12 +12,12 @@ import {
     REMOVE_ACTIVE_USER,
     SET_ACTIVE_USER,
 } from "../../Redux/slice/authSlice";
-// import ShowOnLogin, { ShowOnLogout } from "../hiddenLink/hiddenLink";
-// import { AdminOnlyLink } from "../adminOnlyRoute/AdminOnlyRoute";
-// import {
-//     CALCULATE_TOTAL_QUANTITY,
-//     selectCartTotalQuantity,
-// } from "../../redux/slice/cartSlice";
+import ShowOnLogin, { ShowOnLogout } from "../hiddenLink/hiddenLink";
+import { AdminOnlyLink } from "../adminOnlyRoute/AdminOnlyRoute";
+import {
+    CALCULATE_TOTAL_QUANTITY,
+    selectCartTotalQuantity,
+} from "../../Redux/slice/cartSlice";
 
 const logo = (
     <div className={styles.logo}>
@@ -35,11 +35,11 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [displayName, setdisplayName] = useState("");
     const [scrollPage, setScrollPage] = useState(false);
-    // const cartTotalQuantity = useSelector(selectCartTotalQuantity);
+    const cartTotalQuantity = useSelector(selectCartTotalQuantity);
 
-    // useEffect(() => {
-    //     dispatch(CALCULATE_TOTAL_QUANTITY());
-    // }, []);
+    useEffect(() => {
+        dispatch(CALCULATE_TOTAL_QUANTITY());
+    }, []);
 
     const navigate = useNavigate();
 
@@ -105,7 +105,7 @@ const Header = () => {
             <Link to="/cart">
                 Cart
                 <FaShoppingCart size={20} />
-                {/* <p>{cartTotalQuantity}</p> */}
+                <p>{cartTotalQuantity}</p>
             </Link>
         </span>
     );
@@ -135,13 +135,13 @@ const Header = () => {
                                 {logo}
                                 <FaTimes size={22} color="#fff" onClick={hideMenu} />
                             </li>
-                            {/* <li>
+                            <li>
                                 <AdminOnlyLink>
                                     <Link to="/admin/home">
                                         <button className="--btn --btn-primary">Admin</button>
                                     </Link>
                                 </AdminOnlyLink>
-                            </li> */}
+                            </li>
                             <li>
                                 <NavLink to="/" className={activeLink}>
                                     Home
@@ -154,7 +154,7 @@ const Header = () => {
                             </li>
                         </ul>
                         <div className={styles["header-right"]} onClick={hideMenu}>
-                            {/* <span className={styles.links}>
+                            <span className={styles.links}>
                                 <ShowOnLogout>
                                     <NavLink to="/login" className={activeLink}>
                                         Login
@@ -176,7 +176,7 @@ const Header = () => {
                                         Logout
                                     </NavLink>
                                 </ShowOnLogin>
-                            </span> */}
+                            </span>
                             {cart}
                         </div>
                     </nav>
