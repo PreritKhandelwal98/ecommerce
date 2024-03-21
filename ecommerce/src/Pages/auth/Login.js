@@ -14,9 +14,10 @@ import { toast } from "react-toastify";
 import Loader from "../../Components/loader/Loader";
 import { useSelector } from "react-redux";
 import { selectPreviousURL } from "../../Redux/slice/cartSlice";
+import axios from "axios";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -30,22 +31,43 @@ const Login = () => {
         navigate("/");
     };
 
-    const loginUser = (e) => {
-        e.preventDefault();
-        setIsLoading(true);
+    // const loginUser = (e) => {
+    //     e.preventDefault();
+    //     setIsLoading(true);
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // const user = userCredential.user;
-                setIsLoading(false);
-                toast.success("Login Successful...");
-                redirectUser();
-            })
-            .catch((error) => {
-                setIsLoading(false);
-                toast.error(error.message);
+    //     signInWithEmailAndPassword(auth, email, password)
+    //         .then((userCredential) => {
+    //             // const user = userCredential.user;
+    //             setIsLoading(false);
+    //             toast.success("Login Successful...");
+    //             redirectUser();
+    //         })
+    //         .catch((error) => {
+    //             setIsLoading(false);
+    //             toast.error(error.message);
+    //         });
+    // };
+
+    const loginUser = async (e) => {
+        e.preventDefault();
+        try {
+            setIsLoading(true);
+            const { data } = await axios.post('http://localhost:8080/api/v1/users/login', {
+                username,
+                password
             });
-    };
+            if (data.success) {
+                setIsLoading(false);
+                toast.success("Login Successful");
+                navigate('/');
+            }
+        } catch (error) {
+            setIsLoading(false);
+            toast.error("Login failed ")
+        }
+
+
+    }
 
     // Login with Goooglr
     const provider = new GoogleAuthProvider();
@@ -76,10 +98,10 @@ const Login = () => {
                         <form onSubmit={loginUser}>
                             <input
                                 type="text"
-                                placeholder="Email"
+                                placeholder="Username"
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                             <input
                                 type="password"
