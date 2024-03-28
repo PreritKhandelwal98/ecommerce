@@ -45,7 +45,7 @@ const Register = () => {
                 toast.error("Passwords do not match.");
             }
             setIsLoading(true);
-            const { data } = await axios.post("http://localhost:8080/api/v1/users/register", {
+            const { data } = await axios.post("http://localhost:8000/api/v1/users/register", {
                 email,
                 password,
                 username

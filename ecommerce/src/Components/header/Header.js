@@ -33,17 +33,24 @@ const activeLink = ({ isActive }) => (isActive ? `${styles.active}` : "");
 
 const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [displayName, setdisplayName] = useState("");
     const [scrollPage, setScrollPage] = useState(false);
     const cartTotalQuantity = useSelector(selectCartTotalQuantity);
 
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const username = useSelector((state) => state.auth.username);
+    console.log(username);
     useEffect(() => {
         dispatch(CALCULATE_TOTAL_QUANTITY());
     }, []);
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken && isLoggedIn) {
+
+        }
+    }, [dispatch]);
 
     const navigate = useNavigate();
-
-    const dispatch = useDispatch();
 
     const fixNavbar = () => {
         if (window.scrollY > 50) {
@@ -54,33 +61,6 @@ const Header = () => {
     };
     window.addEventListener("scroll", fixNavbar);
 
-    // Monitor currently sign in user
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // console.log(user);
-                if (user.displayName == null) {
-                    const u1 = user.email.slice(0, -10);
-                    const uName = u1.charAt(0).toUpperCase() + u1.slice(1);
-                    setdisplayName(uName);
-                } else {
-                    setdisplayName(user.displayName);
-                }
-
-                dispatch(
-                    SET_ACTIVE_USER({
-                        email: user.email,
-                        userName: user.displayName ? user.displayName : displayName,
-                        userID: user.uid,
-                    })
-                );
-            } else {
-                setdisplayName("");
-                dispatch(REMOVE_ACTIVE_USER());
-            }
-        });
-    }, [dispatch, displayName]);
-
     const toggleMenu = () => {
         setShowMenu(!showMenu);
     };
@@ -90,14 +70,9 @@ const Header = () => {
     };
 
     const logoutUser = () => {
-        signOut(auth)
-            .then(() => {
-                toast.success("Logout successfully.");
-                navigate("/");
-            })
-            .catch((error) => {
-                toast.error(error.message);
-            });
+        dispatch(REMOVE_ACTIVE_USER());
+        localStorage.removeItem('accessToken');
+        navigate("/");
     };
 
     const cart = (
@@ -163,7 +138,7 @@ const Header = () => {
                                 <ShowOnLogin>
                                     <a href="#home" style={{ color: "#ff7722" }}>
                                         <FaUserCircle size={16} />
-                                        Hi, {displayName}
+                                        Hi, {username}
                                     </a>
                                 </ShowOnLogin>
                                 <ShowOnLogin>

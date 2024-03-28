@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     isLoggedIn: false,
+    username: null,
     email: null,
-    useName: null,
     userID: null,
 };
 
@@ -12,17 +12,16 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         SET_ACTIVE_USER: (state, action) => {
-            // console.log(action.payload);
-            const { email, userName, userID } = action.payload;
+            const { username, email, _id } = action.payload;
             state.isLoggedIn = true;
+            state.username = username;
             state.email = email;
-            state.userName = userName;
-            state.userID = userID;
+            state.userID = _id;
         },
         REMOVE_ACTIVE_USER(state, action) {
             state.isLoggedIn = false;
             state.email = null;
-            state.userName = null;
+            state.username = null;
             state.userID = null;
         },
     },
